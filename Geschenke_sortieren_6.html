@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rudolphs Chaos-Flugplan | Escape Game</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            /* Hintergrundfarbe: rgb(111, 22, 111) (Dunkelviolett) */
+            background-color: rgb(111, 22, 111); 
+            color: #fff; /* Textfarbe auf Weiß (Titel, etc. auf dunklem Hintergrund) */
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1, h2, p {
+            color: #fff; /* Überschriften und Absätze außerhalb des Containers sind weiß */
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95); /* Leicht durchscheinendes Weiß für den Inhaltsbereich */
+            /* Textfarbe innen jetzt Dunkelblau! */
+            color: rgb(0, 0, 145); 
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            /* Tabellenrahmen im Akzentton (dunkelblau: 0 0 145) */
+            border: 1px solid rgb(0, 0, 145);
+        }
+
+        th {
+            background-color: rgba(0, 0, 145, 0.8); 
+            color: #fff;
+            text-align: left;
+        }
+
+        input[type="text"] {
+            width: 90%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            color: #333; /* Eingabetextfarbe dunkler lassen */
+        }
+
+        button {
+            /* Buttonfarbe: rgb(0, 0, 145) */
+            background-color: rgb(0, 0, 145); 
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: rgb(0, 0, 190); 
+        }
+
+        /* Stil für den Hinweisbereich */
+        #hinweis-bereich {
+            text-align: left;
+            /* Trennlinie im Akzentton (dunkelblau) */
+            border-top: 2px solid rgb(0, 0, 145) !important; 
+            padding-top: 20px;
+            /* KORRIGIERT: Der Text in H2 bekommt jetzt die Dunkelblau-Farbe von .container */
+        }
+        
+        #hinweis-inhalt {
+            display: flex;
+            align-items: center;
+            gap: 20px; /* Abstand zwischen Gleichung und Note */
+            font-size: 1.2em;
+            margin: 15px 0;
+            color: rgb(0, 0, 145); /* Hinweis-Textfarbe auf dunkelblau */
+        }
+        
+        #musiknote-placeholder {
+            font-size: 2.5em; 
+            color: rgb(0, 0, 145); /* Musiknote in dunkelblau */
+        }
+        
+        #gleichung-placeholder {
+            font-family: monospace; 
+            font-size: 1.2em;
+        }
+        
+        /* Überschrift 2 (H2) im Container muss auch Dunkelblau sein, falls sie weiß geerbt hat */
+        .container h2 {
+            color: rgb(0, 0, 145) !important; 
+        }
+    </style>
+    </head>
+<body>
+    <h1>Oh nein, was für ein Chaos...</h1>
+
+
+    <div class="container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Zielort (Stadt)</th>
+                    <th>Zielname (Paketempfänger)</th>
+                </tr>
+            </thead>
+            <tbody id="eingabe-tabelle">
+                <tr><td><input type="text" id="stadt-1" placeholder="Stadt 1"></td><td><input type="text" id="name-1" placeholder="Name 1"></td></tr>
+                <tr><td><input type="text" id="stadt-2" placeholder="Stadt 2"></td><td><input type="text" id="name-2" placeholder="Name 2"></td></tr>
+                <tr><td><input type="text" id="stadt-3" placeholder="Stadt 3"></td><td><input type="text" id="name-3" placeholder="Name 3"></td></tr>
+                <tr><td><input type="text" id="stadt-4" placeholder="Stadt 4"></td><td><input type="text" id="name-4" placeholder="Name 4"></td></tr>
+                <tr><td><input type="text" id="stadt-5" placeholder="Stadt 5"></td><td><input type="text" id="name-5" placeholder="Name 5"></td></tr>
+                <tr><td><input type="text" id="stadt-6" placeholder="Stadt 6"></td><td><input type="text" id="name-6" placeholder="Name 6"></td></tr>
+                <tr><td><input type="text" id="stadt-7" placeholder="Stadt 7"></td><td><input type="text" id="name-7" placeholder="Name 7"></td></tr>
+                <tr><td><input type="text" id="stadt-8" placeholder="Stadt 8"></td><td><input type="text" id="name-8" placeholder="Name 8"></td></tr>
+            </tbody>
+        </table>
+
+        <button onclick="ueberpruefeEingaben()">Flugplan korrigieren</button>
+
+        <div id="hinweis-bereich" style="display:none; margin-top: 30px; padding-top: 20px;">
+            <h2>Rudolph hat die Freigabe! Seine Geschenke kommen jetzt zu den richtigen Empfängern.</h2>
+            <div id="hinweis-inhalt">
+                <div id="gleichung-placeholder"></div>
+                <div id="musiknote-placeholder">🎶</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- KORREKTE LÖSUNGEN (8 PAARE) ---
+        const RICHTIGE_ANTWORTEN = [
+            { stadt: "frankfurt", name: "leonie" },
+            { stadt: "antalya", name: "deniz" },
+            { stadt: "ljubljana", name: "sofija" },
+            { stadt: "burgas", name: "kaloyan" },
+            { stadt: "lima", name: "santos" },
+            { stadt: "porto alegre", name: "adriana" },
+            { stadt: "cleveland", name: "dylan" },
+            { stadt: "sydney", name: "amelia" }
+        ];
+
+        // KORRIGIERT: Klammern um das Ergebnis entfernt
+        const MATH_HINWEIS = "(((\u25A1−\u25A1)/(((\u25A1−\u25A1)⋅\u25A1)+\u25A1))⋅(\u25A1⋅(\u25A1/\u25A1))) = \u25A1";
+        const ERWARTETE_PAARE = RICHTIGE_ANTWORTEN.length;
+
+        function ueberpruefeEingaben() {
+            let eingegebenePaare = [];
+            for (let i = 0; i < ERWARTETE_PAARE; i++) { 
+                const stadtInput = document.getElementById(`stadt-${i + 1}`);
+                const nameInput = document.getElementById(`name-${i + 1}`);
+                const stadt = stadtInput.value.trim().toLowerCase();
+                const name = nameInput.value.trim().toLowerCase();
+                if (stadt && name) {
+                    eingegebenePaare.push({ stadt, name });
+                }
+            }
+            
+            if (eingegebenePaare.length !== ERWARTETE_PAARE) {
+                alert("Bitte fülle alle " + ERWARTETE_PAARE + " Paare aus.");
+                return;
+            }
+            
+            let korrektePaareGefunden = 0;
+            let verbleibendeRichtigeAntworten = [...RICHTIGE_ANTWORTEN]; 
+            
+            for (const eingegebenesPaar of eingegebenePaare) {
+                const index = verbleibendeRichtigeAntworten.findIndex(richtigesPaar => 
+                    richtigesPaar.stadt === eingegebenesPaar.stadt && 
+                    richtigesPaar.name === eingegebenesPaar.name
+                );
+                
+                if (index !== -1) {
+                    korrektePaareGefunden++;
+                    verbleibendeRichtigeAntworten.splice(index, 1); 
+                }
+            }
+
+            const hinweisBereich = document.getElementById('hinweis-bereich');
+            const gleichungPlaceholder = document.getElementById('gleichung-placeholder');
+
+            // 4. Feedback geben
+            if (korrektePaareGefunden === ERWARTETE_PAARE) {
+                // Erfolg! Hinweis anzeigen
+                hinweisBereich.style.display = 'block';
+                gleichungPlaceholder.textContent = MATH_HINWEIS;
+                
+                // Eingabefelder und Button deaktivieren
+                document.querySelectorAll('input[type="text"]').forEach(input => input.disabled = true);
+                document.querySelector('button').disabled = true;
+
+            } else {
+                // Falsche Antwort
+                hinweisBereich.style.display = 'none';
+                alert("Rudolph kann noch nicht fliegen! Es sind " + korrektePaareGefunden + " von " + ERWARTETE_PAARE + " Paaren korrekt. Überprüfe die Zuordnung noch einmal.");
+            }
+        }
+    </script>
+    </body>
+</html>
