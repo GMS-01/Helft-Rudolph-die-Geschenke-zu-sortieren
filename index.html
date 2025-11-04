@@ -78,7 +78,6 @@
             /* Trennlinie im Akzentton (dunkelblau) */
             border-top: 2px solid rgb(0, 0, 145) !important; 
             padding-top: 20px;
-            /* KORRIGIERT: Der Text in H2 bekommt jetzt die Dunkelblau-Farbe von .container */
         }
         
         #hinweis-inhalt {
@@ -103,6 +102,14 @@
         /* Überschrift 2 (H2) im Container muss auch Dunkelblau sein, falls sie weiß geerbt hat */
         .container h2 {
             color: rgb(0, 0, 145) !important; 
+        }
+
+        /* Stil für den Reim, erbt die Farbe von .container */
+        #reim-placeholder {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: rgb(0, 0, 145); /* Explizit Dunkelblau, falls es nicht sauber geerbt wird */
         }
     </style>
     </head>
@@ -134,6 +141,7 @@
 
         <div id="hinweis-bereich" style="display:none; margin-top: 30px; padding-top: 20px;">
             <h2>Rudolph hat die Freigabe! Seine Geschenke kommen jetzt zu den richtigen Empfängern.</h2>
+            <p id="reim-placeholder"></p> 
             <div id="hinweis-inhalt">
                 <div id="gleichung-placeholder"></div>
                 <div id="musiknote-placeholder">🎶</div>
@@ -154,8 +162,10 @@
             { stadt: "sydney", name: "amelia" }
         ];
 
-        // KORRIGIERT: Klammern um das Ergebnis entfernt
-        const MATH_HINWEIS = "(((\u25A1−\u25A1)/(((\u25A1−\u25A1)⋅\u25A1)+\u25A1))⋅(\u25A1⋅(\u25A1/\u25A1))) = \u25A1";
+        // Die Gleichung mit den leeren Quadraten
+        const MATH_GLEICHUNG = "((\u25A1−\u25A1)/(((\u25A1−\u25A1)⋅\u25A1)+\u25A1))⋅(\u25A1⋅(\u25A1/\u25A1)) = \u25A1";
+        // NEUER Reim, wie gewünscht
+        const MATH_REIM = "Gezählt, gedacht, nun rechne klar – der nächste Schritt wird offenbar.";
         const ERWARTETE_PAARE = RICHTIGE_ANTWORTEN.length;
 
         function ueberpruefeEingaben() {
@@ -192,12 +202,14 @@
 
             const hinweisBereich = document.getElementById('hinweis-bereich');
             const gleichungPlaceholder = document.getElementById('gleichung-placeholder');
+            const reimPlaceholder = document.getElementById('reim-placeholder');
 
             // 4. Feedback geben
             if (korrektePaareGefunden === ERWARTETE_PAARE) {
                 // Erfolg! Hinweis anzeigen
                 hinweisBereich.style.display = 'block';
-                gleichungPlaceholder.textContent = MATH_HINWEIS;
+                gleichungPlaceholder.textContent = MATH_GLEICHUNG;
+                reimPlaceholder.textContent = MATH_REIM; 
                 
                 // Eingabefelder und Button deaktivieren
                 document.querySelectorAll('input[type="text"]').forEach(input => input.disabled = true);
