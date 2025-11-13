@@ -8,22 +8,20 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            /* Hintergrundfarbe: rgb(111, 22, 111) (Dunkelviolett) */
             background-color: rgb(111, 22, 111); 
-            color: #fff; /* Textfarbe auf Weiß (Titel, etc. auf dunklem Hintergrund) */
+            color: #fff;
             text-align: center;
             padding: 20px;
         }
 
         h1, h2, p {
-            color: #fff; /* Überschriften und Absätze außerhalb des Containers sind weiß */
+            color: #fff;
         }
 
         .container {
             max-width: 800px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95); /* Leicht durchscheinendes Weiß für den Inhaltsbereich */
-            /* Textfarbe innen jetzt Dunkelblau! */
+            background: rgba(255, 255, 255, 0.95);
             color: rgb(0, 0, 145); 
             padding: 30px;
             border-radius: 10px;
@@ -38,7 +36,6 @@
 
         th, td {
             padding: 10px;
-            /* Tabellenrahmen im Akzentton (dunkelblau: 0 0 145) */
             border: 1px solid rgb(0, 0, 145);
         }
 
@@ -53,11 +50,10 @@
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            color: #333; /* Eingabetextfarbe dunkler lassen */
+            color: #333;
         }
 
         button {
-            /* Buttonfarbe: rgb(0, 0, 145) */
             background-color: rgb(0, 0, 145); 
             color: white;
             padding: 10px 20px;
@@ -72,50 +68,77 @@
             background-color: rgb(0, 0, 190); 
         }
 
-        /* Stil für den Hinweisbereich */
         #hinweis-bereich {
             text-align: left;
-            /* Trennlinie im Akzentton (dunkelblau) */
             border-top: 2px solid rgb(0, 0, 145) !important; 
             padding-top: 20px;
+            margin-top: 30px;
         }
         
         #hinweis-inhalt {
             display: flex;
             align-items: center;
-            gap: 20px; /* Abstand zwischen Gleichung und Note */
+            gap: 20px;
             font-size: 1.2em;
             margin: 15px 0;
-            color: rgb(0, 0, 145); /* Hinweis-Textfarbe auf dunkelblau */
+            color: rgb(0, 0, 145);
         }
         
         #musiknote-placeholder {
             font-size: 2.5em; 
-            color: rgb(0, 0, 145); /* Musiknote in dunkelblau */
+            color: rgb(0, 0, 145);
+            animation: floatNote 3s ease-in-out infinite;
+        }
+
+        @keyframes floatNote {
+            0% { transform: translateY(0px); opacity: 1; }
+            50% { transform: translateY(-5px); opacity: 0.8; }
+            100% { transform: translateY(0px); opacity: 1; }
         }
         
         #gleichung-placeholder {
-            font-family: monospace; 
-            font-size: 1.2em;
+            font-family: "Courier New", monospace;
+            font-size: 1.3em;
+            padding: 10px 15px;
+            background-color: rgba(0, 0, 145, 0.05);
+            border: 2px dashed rgb(0, 0, 145);
+            border-radius: 8px;
+            text-align: center;
+            min-width: 300px;
+            transition: background-color 0.8s ease;
         }
         
-        /* Überschrift 2 (H2) im Container muss auch Dunkelblau sein, falls sie weiß geerbt hat */
         .container h2 {
             color: rgb(0, 0, 145) !important; 
         }
 
-        /* Stil für den Reim, erbt die Farbe von .container */
         #reim-placeholder {
             font-size: 1.2em;
             margin-bottom: 20px;
             font-weight: bold;
-            color: rgb(0, 0, 145); /* Explizit Dunkelblau, falls es nicht sauber geerbt wird */
+            color: rgb(0, 0, 145);
+        }
+
+        #ergebnis-eingabe {
+            width: 50px;
+            text-align: center;
+            font-size: 1.2em;
+            margin-left: 8px;
+            border: 2px solid rgb(0, 0, 145);
+            border-radius: 6px;
+            color: rgb(0, 0, 145);
+            background-color: rgba(255,255,255,0.9);
+        }
+
+        #ergebnis-eingabe:focus {
+            outline: none;
+            border-color: rgb(0, 190, 0);
+            background-color: rgba(0,255,0,0.1);
         }
     </style>
-    </head>
+</head>
 <body>
     <h1>Oh nein, was für ein Chaos...</h1>
-
 
     <div class="container">
         <table>
@@ -139,7 +162,7 @@
 
         <button onclick="ueberpruefeEingaben()">Flugplan korrigieren</button>
 
-        <div id="hinweis-bereich" style="display:none; margin-top: 30px; padding-top: 20px;">
+        <div id="hinweis-bereich" style="display:none;">
             <h2>Rudolph hat die Freigabe! Seine Geschenke kommen jetzt zu den richtigen Empfängern.</h2>
             <p id="reim-placeholder"></p> 
             <div id="hinweis-inhalt">
@@ -150,7 +173,6 @@
     </div>
 
     <script>
-        // --- KORREKTE LÖSUNGEN (8 PAARE) ---
         const RICHTIGE_ANTWORTEN = [
             { stadt: "frankfurt", name: "leonie" },
             { stadt: "antalya", name: "deniz" },
@@ -162,10 +184,7 @@
             { stadt: "sydney", name: "amelia" }
         ];
 
-        // NEU: Die Gleichung ist nun vollständig mit Platzhaltern und folgt der Struktur (□+□-□-□)+□ = □
-        const MATH_GLEICHUNG = "(\u25A1+\u25A1−\u25A1−\u25A1)+\u25A1 = \u25A1";
-        
-        // Der Reim bleibt unverändert
+        const MATH_GLEICHUNG = "(□ + □ − □ − □) + □ =";
         const MATH_REIM = "Gezählt, gedacht, nun rechne klar – der nächste Schritt wird offenbar.";
         const ERWARTETE_PAARE = RICHTIGE_ANTWORTEN.length;
 
@@ -205,23 +224,40 @@
             const gleichungPlaceholder = document.getElementById('gleichung-placeholder');
             const reimPlaceholder = document.getElementById('reim-placeholder');
 
-            // 4. Feedback geben
             if (korrektePaareGefunden === ERWARTETE_PAARE) {
-                // Erfolg! Hinweis anzeigen
                 hinweisBereich.style.display = 'block';
                 gleichungPlaceholder.textContent = MATH_GLEICHUNG;
                 reimPlaceholder.textContent = MATH_REIM; 
                 
-                // Eingabefelder und Button deaktivieren
                 document.querySelectorAll('input[type="text"]').forEach(input => input.disabled = true);
                 document.querySelector('button').disabled = true;
 
+                // === Eingabefeld für Ergebnis hinzufügen ===
+                const ergebnisInput = document.createElement('input');
+                ergebnisInput.type = 'text';
+                ergebnisInput.id = 'ergebnis-eingabe';
+                ergebnisInput.placeholder = '?';
+                ergebnisInput.maxLength = 2;
+                gleichungPlaceholder.appendChild(ergebnisInput);
+
+                // === Eingabe prüfen ===
+                ergebnisInput.addEventListener('input', () => {
+                    if (ergebnisInput.value.trim() === '6') {
+                        // Aufleuchten der Gleichung
+                        gleichungPlaceholder.style.backgroundColor = 'rgba(0,255,0,0.3)';
+                        setTimeout(() => gleichungPlaceholder.style.backgroundColor = 'transparent', 1000);
+
+                        // Neuer Hinweistext
+                        reimPlaceholder.textContent = "Du bist auf der richtigen Spur... Haltet Ausschau nach euren Boarding-Pässen, ihr cleveren Detektive!";
+
+                        ergebnisInput.disabled = true;
+                    }
+                });
             } else {
-                // Falsche Antwort
                 hinweisBereich.style.display = 'none';
                 alert("Rudolph kann noch nicht fliegen! Es sind " + korrektePaareGefunden + " von " + ERWARTETE_PAARE + " Paaren korrekt. Überprüfe die Zuordnung noch einmal.");
             }
         }
     </script>
-    </body>
+</body>
 </html>
