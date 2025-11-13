@@ -135,6 +135,13 @@
             border-color: rgb(0, 190, 0);
             background-color: rgba(0,255,0,0.1);
         }
+
+        /* optisches Feedback bei Sperre */
+        #ergebnis-eingabe.locked {
+            background-color: rgba(255,0,0,0.15);
+            border-color: rgb(190,0,0);
+            color: rgb(190,0,0);
+        }
     </style>
 </head>
 <body>
@@ -226,32 +233,50 @@
 
             if (korrektePaareGefunden === ERWARTETE_PAARE) {
                 hinweisBereich.style.display = 'block';
-
-                // ✅ Neue Zeile: Automatisch zum Hinweisbereich scrollen
                 hinweisBereich.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
+                reimPlaceholder.textContent = MATH_REIM;
                 gleichungPlaceholder.textContent = MATH_GLEICHUNG;
-                reimPlaceholder.textContent = MATH_REIM; 
                 
                 document.querySelectorAll('input[type="text"]').forEach(input => input.disabled = true);
                 document.querySelector('button').disabled = true;
 
-                // === Eingabefeld für Ergebnis hinzufügen ===
+                const vorhandenes = document.getElementById('ergebnis-eingabe');
+                if (vorhandenes) vorhandenes.remove();
+
                 const ergebnisInput = document.createElement('input');
                 ergebnisInput.type = 'text';
                 ergebnisInput.id = 'ergebnis-eingabe';
                 ergebnisInput.placeholder = '?';
                 ergebnisInput.maxLength = 2;
                 gleichungPlaceholder.appendChild(ergebnisInput);
+                setTimeout(() => ergebnisInput.focus(), 200);
 
-                // === Eingabe prüfen ===
+                let locked = false;
+
                 ergebnisInput.addEventListener('input', () => {
-                    if (ergebnisInput.value.trim() === '6') {
+                    if (locked) return; // keine Eingabe während Sperre
+
+                    const wert = ergebnisInput.value.trim();
+                    if (wert === '6') {
                         gleichungPlaceholder.style.backgroundColor = 'rgba(0,255,0,0.3)';
                         setTimeout(() => gleichungPlaceholder.style.backgroundColor = 'transparent', 1000);
-
                         reimPlaceholder.textContent = "Du bist auf der richtigen Spur... Haltet Ausschau nach euren Boarding-Pässen, ihr cleveren Detektive!";
                         ergebnisInput.disabled = true;
+                    } else if (wert && wert !== '6') {
+                        // Sperre aktivieren
+                        locked = true;
+                        ergebnisInput.classList.add('locked');
+                        ergebnisInput.disabled = true;
+                        reimPlaceholder.textContent = "Falsche Zahl! Du musst 1 Minute warten, bevor du es erneut versuchen kannst...";
+                        setTimeout(() => {
+                            ergebnisInput.disabled = false;
+                            ergebnisInput.classList.remove('locked');
+                            reimPlaceholder.textContent = MATH_REIM;
+                            ergebnisInput.value = '';
+                            locked = false;
+                            ergebnisInput.focus();
+                        }, 60000); // 60 Sekunden Sperrzeit
                     }
                 });
             } else {
@@ -262,3 +287,4 @@
     </script>
 </body>
 </html>
+
