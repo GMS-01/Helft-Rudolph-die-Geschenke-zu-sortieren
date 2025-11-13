@@ -226,6 +226,10 @@
 
             if (korrektePaareGefunden === ERWARTETE_PAARE) {
                 hinweisBereich.style.display = 'block';
+
+                // ✅ Neue Zeile: Automatisch zum Hinweisbereich scrollen
+                hinweisBereich.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
                 gleichungPlaceholder.textContent = MATH_GLEICHUNG;
                 reimPlaceholder.textContent = MATH_REIM; 
                 
@@ -243,13 +247,10 @@
                 // === Eingabe prüfen ===
                 ergebnisInput.addEventListener('input', () => {
                     if (ergebnisInput.value.trim() === '6') {
-                        // Aufleuchten der Gleichung
                         gleichungPlaceholder.style.backgroundColor = 'rgba(0,255,0,0.3)';
                         setTimeout(() => gleichungPlaceholder.style.backgroundColor = 'transparent', 1000);
 
-                        // Neuer Hinweistext
                         reimPlaceholder.textContent = "Du bist auf der richtigen Spur... Haltet Ausschau nach euren Boarding-Pässen, ihr cleveren Detektive!";
-
                         ergebnisInput.disabled = true;
                     }
                 });
