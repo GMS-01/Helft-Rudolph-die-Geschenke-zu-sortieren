@@ -6,6 +6,11 @@
     <title>Rudolphs Chaos-Flugplan | Escape Game</title>
     
     <style>
+        /* NEUE ZEILE: Verhindert, dass der Browser die Farben im Dark Mode überschreibt */
+        html, body {
+            color-scheme: light; 
+        }
+
         body {
             font-family: Arial, sans-serif;
             background-color: rgb(111, 22, 111); 
@@ -194,9 +199,9 @@
         const MATH_GLEICHUNG = "(□ + □ − □ − □) + □ =";
         const MATH_REIM = "Gezählt, gedacht, nun rechne klar – der nächste Schritt wird offenbar.";
         const ERWARTETE_PAARE = RICHTIGE_ANTWORTEN.length;
-        
-        // NEUER KONSTANTER HINWEISTEXT
-        const NEUER_ERFOLGS_HINWEIS = "Die 6 ist korrekt! Das ist die zweite Ziffer eures dreistelligen Codes. Großartig! Jetzt ist es Zeit, eure Boarding-Pässe unter die Lupe zu nehmen. Dort findet ihr den nächsten Hinweis.";
+        
+        // NEUER KONSTANTER HINWEISTEXT
+        const NEUER_ERFOLGS_HINWEIS = "Die 6 ist korrekt! Das ist die zweite Ziffer eures dreistelligen Codes. Großartig! Jetzt ist es Zeit, eure Boarding-Pässe unter die Lupe zu nehmen. Dort findet ihr den nächsten Hinweis.";
 
 
         function ueberpruefeEingaben() {
@@ -240,8 +245,8 @@
                 hinweisBereich.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
                 // Textfarbe auf den Standardwert zurücksetzen, falls er durch die Sperre geändert wurde
-                reimPlaceholder.style.color = 'rgb(0, 0, 145)'; 
-                
+                reimPlaceholder.style.color = 'rgb(0, 0, 145)'; 
+                
                 reimPlaceholder.textContent = MATH_REIM;
                 gleichungPlaceholder.textContent = MATH_GLEICHUNG;
                 
@@ -270,28 +275,28 @@
                         gleichungPlaceholder.style.backgroundColor = 'rgba(0,255,0,0.3)';
                         ergebnisInput.style.borderColor = 'rgb(0, 190, 0)';
                         ergebnisInput.style.backgroundColor = 'rgba(0,255,0,0.1)';
-                        
+                        
                         // NEU: Den Hinweistext selbst grün färben
-                        reimPlaceholder.style.color = 'rgb(0, 140, 0)'; 
-                        
+                        reimPlaceholder.style.color = 'rgb(0, 140, 0)'; 
+                        
                         // Den klaren Hinweistext anzeigen und Eingabe sperren
                         reimPlaceholder.textContent = NEUER_ERFOLGS_HINWEIS;
                         ergebnisInput.disabled = true;
-                        
+                        
                     } else if (wert && wert !== '6') {
                         // Sperre aktivieren
                         locked = true;
                         ergebnisInput.classList.add('locked');
                         ergebnisInput.disabled = true;
                         reimPlaceholder.textContent = "Falsche Zahl! Du musst 1 Minute warten, bevor du es erneut versuchen kannst...";
-                        // Wichtig: Text bei Sperre rot färben
-                        reimPlaceholder.style.color = 'rgb(190,0,0)'; 
+                        // Wichtig: Text bei Sperre rot färben
+                        reimPlaceholder.style.color = 'rgb(190,0,0)'; 
 
                         setTimeout(() => {
                             ergebnisInput.disabled = false;
                             ergebnisInput.classList.remove('locked');
-                            // Textfarbe auf den Standardwert (blau) zurücksetzen
-                            reimPlaceholder.style.color = 'rgb(0, 0, 145)';
+                            // Textfarbe auf den Standardwert (blau) zurücksetzen
+                            reimPlaceholder.style.color = 'rgb(0, 0, 145)';
                             reimPlaceholder.textContent = MATH_REIM;
                             ergebnisInput.value = '';
                             locked = false;
